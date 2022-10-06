@@ -1,1 +1,3 @@
-console.log("Hello Typescript ✌️😎 !");
+
+
+console.log('Salut typescript');
