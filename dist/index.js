@@ -21,7 +21,7 @@ app.use((0, morgan_1.default)('common'));
 app.use((0, helmet_1.default)());
 // Apply the rate limiting middleware to all requests
 app.use((0, express_rate_limit_1.default)({
-    windowMs: 15 * 60 * 1000,
+    windowMs: 60 * 60 * 1000,
     max: 100,
     standardHeaders: true,
     legacyHeaders: false,
@@ -34,7 +34,8 @@ app.get('/', (req, res) => {
     });
 });
 // Request Post
-app.use('/', (req, res) => {
+app.post('/', (req, res) => {
+    console.log(req.body);
     res.json({
         message: 'Hello world 🌍 from post',
         data: req.body,
