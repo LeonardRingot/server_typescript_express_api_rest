@@ -1,1 +1,1 @@
-console.log('typescript is runnings');
+console.log('hello world');
