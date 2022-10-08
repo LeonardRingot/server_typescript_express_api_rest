@@ -5,6 +5,7 @@ import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import RateLimit from 'express-rate-limit';
+import errorMiddleware from './middleware/error.middleware';
 
 const PORT = 3000;
 
@@ -32,6 +33,8 @@ app.use(
 
 // add routing for / path
 app.get('/', (req: Request, res: Response) => {
+  throw new Error('Une erreure existe');
+
   res.json({
     message: 'Hello world 🌍',
   });
@@ -39,10 +42,19 @@ app.get('/', (req: Request, res: Response) => {
 
 // Request Post
 app.post('/', (req: Request, res: Response) => {
-  console.log(req.body);
+  // console.log(req.body);
   res.json({
     message: 'Hello world 🌍 from post',
     data: req.body,
+  });
+});
+
+app.use(errorMiddleware);
+
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({
+    message:
+      'Ohh vous êtes perdu, lisez la documentation de l"API pour retrouver le chemin du retour 😂',
   });
 });
 
