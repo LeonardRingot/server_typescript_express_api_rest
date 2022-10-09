@@ -11,6 +11,8 @@ const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const error_middleware_1 = __importDefault(require("./middleware/error.middleware"));
+const config_1 = __importDefault(require("./config"));
+console.log(config_1.default);
 const PORT = 3000;
 //create instance server
 const app = (0, express_1.default)();
