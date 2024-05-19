@@ -1,43 +1,67 @@
-import { createPrivateKey } from 'crypto';
-import express from 'express'
-const jwt = require('jsonwebtoken');
-const port = 3000;
-
 /**
- * On créé une nouvelle "application" express
+ * Import des modules nécessaires
  */
- const app = express()
+import express, { Application, Request, Response } from 'express';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import RateLimit from 'express-rate-limit';
+import errorMiddleware from './middleware/error.middleware';
+import config from './config';
 
- const users = [
-  {
-  name:'leonard', 
-  password:'root'
- }
-]
-app.use(express.json())
- app.get('/', (req, res) => {
-    res.send('Hello World!');
-  });
-  
-app.post('/auth', (req, res)=>{
-  const {name, password} =req.body
-  const valid = users.some((user)=>user.name === name && user.password === password)
-  //const token = jwt.sign({name}, createPrivateKey,{algorithm: 'RS256'} )
-  if(valid)
-  {
-     res.send(valid)
-  } else 
-  {
-    res.send("erreur")
-  }
- 
-})
-  app.listen(port, () => {
-    return console.log(`Express is listening at http://localhost:${port}`);
-  });
- 
+const PORT = config.port || 3000;
 
- 
- 
- 
- 
+//create instance server
+const app: Application = express();
+// middleware to parse incoming requests
+app.use(express.json());
+
+// HTTP request logger middleware
+app.use(morgan('common'));
+// HTTP security middleware
+app.use(helmet());
+
+// Apply the rate limiting middleware to all requests
+app.use(
+  RateLimit({
+    windowMs: 60 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message:
+      'Too many accounts created from this IP, please try again after an hour',
+  })
+);
+
+// add routing for / path
+app.get('/', (req: Request, res: Response) => {
+  throw new Error('Une erreure existe');
+
+  res.json({
+    message: 'Hello world 🌍',
+  });
+});
+
+// Request Post
+app.post('/', (req: Request, res: Response) => {
+  // console.log(req.body);
+  res.json({
+    message: 'Hello world 🌍 from post',
+    data: req.body,
+  });
+});
+
+app.use(errorMiddleware);
+
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({
+    message:
+      'Ohh vous êtes perdu, lisez la documentation de l"API pour retrouver le chemin du retour 😂',
+  });
+});
+
+// start server express
+app.listen(PORT, () => {
+  console.log(`My server running at port : ${PORT}`);
+});
+
+export default app;
